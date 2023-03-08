@@ -88,7 +88,6 @@ class DataCalculationTask:
 
         return avg_temp, avg_num_hours
 
-    # def _get_city_forecast(self, city_data: tuple[str, dict]) -> CityForecast:
     def _get_city_forecast(self, city_data: tuple[str, dict]):
         city_name = city_data[0]
         city_forecast = city_data[1]
@@ -102,13 +101,6 @@ class DataCalculationTask:
             for date_info in city_forecast
         ]
         avg_temp, avg_num_hours = self._calculate_avgs(dates)
-        # # faster
-        # return CityForecast(
-        #     name=city_name,
-        #     dates=dates,
-        #     avg_temp=avg_temp,
-        #     avg_num_hours=avg_num_hours,
-        # )
         self.queue.put(
             CityForecast(
                 name=city_name,
@@ -120,13 +112,6 @@ class DataCalculationTask:
 
     def get_city_forecasts(self, city_data: Iterable) -> list[CityForecast]:
         city_forecasts = []
-        # processes = []
-        # for data in city_data:
-        #     process = Process(target=self._get_city_forecast, args=(data,))
-        #     process.start()
-        #     processes.append(process)
-        # for process in processes:
-        #     process.join()
         with Pool() as pool:
             for data in city_data:
                 pool.apply_async(self._get_city_forecast, args=(data,))

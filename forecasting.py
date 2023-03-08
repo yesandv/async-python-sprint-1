@@ -1,5 +1,3 @@
-import time
-
 from tasks import (
     DataFetchingTask,
     DataCalculationTask,
@@ -15,8 +13,6 @@ def forecast_weather():
     """
     city_data = DataFetchingTask().fetch_city_data(CITIES)
     calculation_task = DataCalculationTask()
-    # # faster
-    # forecasts = [calculation_task._get_city_forecast(_city_data) for _city_data in city_data]
     forecasts = calculation_task.get_city_forecasts(city_data)
     analyzing_task = DataAnalyzingTask(list(forecasts))
     ratings = analyzing_task.sort_by_rating()
