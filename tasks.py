@@ -1,6 +1,6 @@
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from multiprocessing import Queue, Pool, Manager
+from multiprocessing import Pool, Manager
 from typing import Iterable
 
 from pandas import DataFrame
@@ -16,7 +16,6 @@ class DataFetchingTask:
 
     def __init__(self):
         self.api = YandexWeatherAPI()
-        self.queue = Queue()
 
     def get_city_info(self, city_name: str) -> tuple[str, dict]:
         try:
