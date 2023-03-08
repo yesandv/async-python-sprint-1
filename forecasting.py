@@ -1,9 +1,5 @@
-# import logging
-# import threading
-# import subprocess
-# import multiprocessing
+import time
 
-from api_client import YandexWeatherAPI
 from tasks import (
     DataFetchingTask,
     DataCalculationTask,
@@ -17,10 +13,17 @@ def forecast_weather():
     """
     Анализ погодных условий по городам
     """
-    # city_name = "MOSCOW"
-    # ywAPI = YandexWeatherAPI()
-    # resp = ywAPI.get_forecasting(city_name)
-    pass
+    city_data = DataFetchingTask().fetch_city_data(CITIES)
+    calculation_task = DataCalculationTask()
+    # # faster
+    # forecasts = [calculation_task._get_city_forecast(_city_data) for _city_data in city_data]
+    forecasts = calculation_task.get_city_forecasts(city_data)
+    analyzing_task = DataAnalyzingTask(list(forecasts))
+    ratings = analyzing_task.sort_by_rating()
+    print(analyzing_task.fav_city())
+    aggregation_task = DataAggregationTask()
+    aggregation_task.create_table(ratings)
+    aggregation_task.create_file("forecasts.csv")
 
 
 if __name__ == "__main__":

@@ -2,6 +2,8 @@ import logging
 import json
 from urllib.request import urlopen
 
+import certifi
+
 from utils import CITIES, ERR_MESSAGE_TEMPLATE
 
 logger = logging.getLogger()
@@ -13,19 +15,19 @@ class YandexWeatherAPI:
     """
 
     @staticmethod
-    def _do_req(url):
+    def _do_request(url: str) -> dict:
         """Base request method"""
         try:
-            with urlopen(url) as req:
-                resp = req.read().decode("utf-8")
-                resp = json.loads(resp)
+            with urlopen(url, cafile=certifi.where()) as req:
+                response = req.read().decode("utf-8")
+                response = json.loads(response)
             if req.status != 200:
                 raise Exception(
-                    "Error during execute request. {}: {}".format(
-                        resp.status, resp.reason
+                    "Error while executing the request. {}: {}".format(
+                        response.status, response.reason
                     )
                 )
-            return resp
+            return response
         except Exception as ex:
             logger.error(ex)
             raise Exception(ERR_MESSAGE_TEMPLATE)
@@ -37,10 +39,10 @@ class YandexWeatherAPI:
         except KeyError:
             raise Exception("Please check that city {} exists".format(city_name))
 
-    def get_forecasting(self, city_name: str):
+    def get_forecasting(self, city_name: str) -> dict:
         """
         :param city_name: key as str
         :return: response data as json
         """
         city_url = self._get_url_by_city_name(city_name)
-        return self._do_req(city_url)
+        return self._do_request(city_url)
