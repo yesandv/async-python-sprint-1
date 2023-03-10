@@ -18,10 +18,12 @@ class DataFetchingTask:
         self.api = YandexWeatherAPI()
 
     def get_city_info(self, city_name: str) -> tuple[str, dict]:
+        city_info = None
         try:
             logger.info(f"Getting a forecast for {city_name.capitalize()}")
-            return city_name, self.api.get_forecasting(city_name)["forecasts"]
-        except KeyError:
+            return city_name, (city_info := self.api.get_forecasting(city_name))["forecasts"]
+        except (KeyError, TypeError):
+            logger.exception(f"Response JSON: {city_info}")
             raise Exception(
                 f"There is no 'forecasts' key for {city_name.capitalize()}"
             )

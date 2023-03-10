@@ -1,5 +1,6 @@
 import logging
 import json
+from http import HTTPStatus
 from urllib.request import urlopen
 
 import certifi
@@ -21,7 +22,7 @@ class YandexWeatherAPI:
             with urlopen(url, cafile=certifi.where()) as req:
                 response = req.read().decode("utf-8")
                 response = json.loads(response)
-            if req.status != 200:
+            if req.status != HTTPStatus.OK:
                 raise Exception(
                     "Error while executing the request. {}: {}".format(
                         response.status, response.reason
