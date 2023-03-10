@@ -20,10 +20,10 @@ class DataFetchingTask:
     def get_city_info(self, city_name: str) -> tuple[str, dict]:
         city_info = None
         try:
-            logger.info(f"Getting a forecast for {city_name.capitalize()}")
+            logger.info("Getting a forecast for %s", city_name.capitalize())
             return city_name, (city_info := self.api.get_forecasting(city_name))["forecasts"]
         except (KeyError, TypeError):
-            logger.exception(f"Response JSON: {city_info}")
+            logger.exception("Response JSON: %s", city_info)
             raise Exception(
                 f"There is no 'forecasts' key for {city_name.capitalize()}"
             )
@@ -48,7 +48,7 @@ class DataCalculationTask:
     @staticmethod
     def _calculate_avg_daily_temp(date_info: dict) -> int:
         date = date_info["date"]
-        logger.info(f"Calculating an average temperature on {date}")
+        logger.info("Calculating an average temperature on %s", date)
         total_temp = [
             hour["temp"]
             for hour in date_info["hours"]
@@ -58,7 +58,7 @@ class DataCalculationTask:
         try:
             avg_temp = sum(total_temp) // len(total_temp)
         except ZeroDivisionError:
-            logger.info(f"Not enough data for {date}")
+            logger.info("Not enough data for %s", date)
         return avg_temp
 
     def _calculate_dry_hours(self, date_info: dict) -> int:
@@ -76,7 +76,7 @@ class DataCalculationTask:
 
     @staticmethod
     def _calculate_avgs(dates: list[DateForecast]) -> tuple[float, float]:
-        logger.info(f"Calculating the averages")
+        logger.info("Calculating the averages")
         total_temp = []
         total_hours = []
         for date in dates:
@@ -92,7 +92,7 @@ class DataCalculationTask:
     def _get_city_forecast(self, city_data: tuple[str, dict]):
         city_name = city_data[0]
         city_forecast = city_data[1]
-        logger.info(f"Getting a forecast for {city_name}")
+        logger.info("Getting a forecast for %s", city_name)
         dates = [
             DateForecast(
                 date=date_info["date"],
